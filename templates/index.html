@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Building Blocks App</title>
+
+<!-- Include Bootstrap CSS and jQuery -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+<!-- App Styles -->
+<style>
+.blocks-container {
+display: flex;
+flex-wrap: wrap;
+justify-content: center;
+gap: 1rem;
+}
+
+.block {
+width: 100px;
+height: 100px;
+background-color: #ff6666;
+border: 1px solid black;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+<div class="blocks-container">
+{% for block in blocks %}
+<div class="block"></div>
+{% endfor %}
+</div>
+</div>
+
+<!-- Include Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- App JS -->
+<script type="text/javascript">
+// Define the speech recognition engine
+var recognition = new webkitSpeechRecognition();
+recognition.continuous = true;
+recognition.interimResults = true;
+recognition.lang = "en-US";
+
+// Start the speech recognition
+recognition.start();
+
+// Handle the speech recognition results
+recognition.addEventListener("result", function(e) {
+var transcript = e.results[e.resultIndex][0].transcript.trim();
+if (transcript === "build") {
+// Make a POST request to the "/build_block" route
+$.ajax({
+url: "/build_block",
+method: "POST",
+success: function() {
+// Add a new block to the UI
+$(".blocks-container").append("<div class='block'></div>");
+}
+});
+} else if (transcript === "dissolve") {
+// Make a POST request to the "/dissolve_block" route
+$.ajax({
+url: "/dissolve_block",
+method: "POST",
+success: function() {
+// Remove the last block from the UI
+$(".blocks-container").children().last().remove();
+}
+});
+}
+});
+</script>
+</body>
+
+</html>
+
